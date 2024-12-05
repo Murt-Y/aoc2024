@@ -1,4 +1,4 @@
-f = open("input/day4.txt", "r")
+~f = open("/input/day4.txt", "r")
 safecount=0
 lines=f.readlines()
 
