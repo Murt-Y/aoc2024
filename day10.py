@@ -11,14 +11,22 @@ ymax=0
 result=0
 coordinates =[]
 user=[0,0]
+trailends=[]
+dtrailends=[]
 
 def Move(p, index, l):
+    global result
     x=p.x
     y=p.y
     val=p.v
 
     if val==9:
-        result+=1
+        trail=l[0],index
+        dtrail=l.append(index)
+        if(trail not in trailends):
+            trailends.append(trail)
+        if(dtrail not in dtrailends):
+            dtrailends.append(trail)        
         return
 
     #MoveLeft
@@ -34,13 +42,13 @@ def Move(p, index, l):
         t.append(next)
         Move(coordinates[next], next, t)
     #MoveDown
-    next=index+xmax
+    next=index+xmax+1
     if(y<ymax and next not in l and coordinates[next].v==val+1):
         t=l.copy()
         t.append(next)
         Move(coordinates[next], next, t)
     #MoveUp
-    next=index-xmax
+    next=index-(xmax+1)
     if(y>0 and next not in l and coordinates[next].v==val+1):
         t=l.copy()
         t.append(next)
@@ -57,6 +65,8 @@ for t in lines:
     for c in t:
         if(c=='\n'):
             break
+        if(c=='.'):
+            c=-1
         temp=Point(xcount, ycount, int(c))
         xcount+=1
         coordinates.append(temp)
@@ -78,4 +88,8 @@ for s in startingpoints:
     p=coordinates[s]
     Move(p, s, l)
 
+result = len(trailends)
+result2=len(dtrailends)
+
 print ("Part 1 is ......" ,result)
+print ("Part 2 is ......" ,result2)
