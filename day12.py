@@ -105,4 +105,51 @@ for c in coordinates:
     i+=1
 
 
+def Move(p, index, list, grid, dir):
+    fence=0
+    
+    x=p.x
+    y=p.y
+    next=0
+
+    if(grid==0):
+        if(dir==0):
+            next=index-(xmax+1)
+            if(y>0 and next in list):
+                fence+=1
+                fence+= Move(coordinates[next], next, list, 3, 3)
+            else:
+                grid=1
+                fence+=Move(p, index, list, grid, dir)
+        elif(dir==1):
+            next=index-1
+            if(x>0 and next in list):
+                fence+=1
+                fence+= Move(coordinates[next], next, list, 1, 2)
+            else:
+                grid=3
+                fence+=Move(p, index, list, grid, dir)
+        elif(dir==2):
+            next=index-1
+            if(x>0 and next in list):
+                grid=1
+                fence+=Move(coordinates[next], next, list, grid, dir)
+            else:
+                grid=3
+                fence+=1
+                fence+=Move(coordinates[next], next, list, grid, dir)
+        ##bunda sıçtım
+        elif(dir==3):
+            next=index-1
+            if(x>0 and next in list):
+                fence+=1
+                fence+= Move(coordinates[next], next, list, 2, 2)
+            else:
+                grid=3
+                fence+=Move(p, index, list, grid, dir)
+
+
+
+
+
 print("Result 1 is ..." , result1)
