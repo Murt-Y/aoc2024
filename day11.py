@@ -33,15 +33,17 @@ for n in numlist:
     cachedir.append(n)
     cache.append(1)
 
-for x in range (25):
+for x in range (75):
     currentcachedir=cachedir.copy()
     currentcache=[]
-    for n in currentcachedir:
-        currentcache.append(0)
+    xn=len(currentcachedir)
+    currentcache=[0]*xn
 
     for i in range (len(cachedir)):
         x=cachedir[i]
         oldoccur=cache[i]
+        if oldoccur==0:
+            continue
         newl=blink(x)
         newnoindex=-1
         for t in newl:
@@ -57,5 +59,6 @@ for x in range (25):
                       
 
 
-result1=len(numlist)
+for x in cache:
+    result1+=x
 print("Result for part 1 is ....", result1)
