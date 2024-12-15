@@ -104,13 +104,43 @@ for c in coordinates:
 
     i+=1
 
+global firstindex
+global firstmove
+
 
 def Move(p, index, list, dir):
+    global firstindex
+    global firstmove
     fence=0
     
     x=p.x
     y=p.y
     next=0
+
+    if index==firstindex:
+        if firstmove==False:
+            fence+=1
+            firstmove=True
+        else:
+            finish=False
+            if dir==1:
+                next=index+1
+                if not (x<xmax and next in list):
+                    fence+=2
+                    finish=True
+            elif dir==2:
+                next=index+(xmax+1)
+                if not (y<ymax and next in list):
+                    fence+=1
+                    finish=True
+            elif dir==3:
+                next=index-1
+                if not (x>0 and next in list):
+                    fence+=0
+                    finish=True 
+            if finish==True:    
+                return fence
+
 
     if(dir==0):
         #sağa doğru geldiyse önce yukarı bak varsa yönü yukarı dön yukarı git
@@ -119,24 +149,33 @@ def Move(p, index, list, dir):
             fence+=1
             dir=3
             fence+= Move(coordinates[next], next, list, dir)
+            return fence
         #yukari yoksa saga bak sagda varsa ona gec fence artmiyor
         else:
             next=index+1
             if(x<xmax and next in list):
-                fence+=Move(p, next, list, dir)
+                fence+=Move(coordinates[next], next, list, dir)
+                return fence
             #yan yoksa yönü aşağıya dön    
             else:
                 fence+=1
                 dir=1
                 next=index+xmax+1
                 if (y<ymax and next in list):
-                    fence+=Move(p, next, list, dir)
+                    fence+=Move(coordinates[next], next, list, dir)
+                    return fence
                 #aşağı da yoksa geri sola dön
                 else:
                     next=index-1
                     fence+=1
                     dir=2
-                    fence+=Move(p, next, list, dir)
+                    if(x>0 and next in list):
+                        fence+=Move(coordinates[next], next, list, dir)
+                        return fence
+                    else:
+                        fence+=1
+                        return fence
+                    
     elif(dir==1):
         #aşağıya doğru geldiyse önce sağa bak varsa yönü sağa dön sağa git
         next=index+1
@@ -144,24 +183,32 @@ def Move(p, index, list, dir):
             fence+=1
             dir=0
             fence+= Move(coordinates[next], next, list, dir)
+            return fence
         #sağ yoksa aşağıya varsa ona gec fence artmiyor
         else:
             next=index+xmax+1
             if(y<ymax and next in list):
-                fence+=Move(p, next, list, dir)
+                fence+=Move(coordinates[next], next, list, dir)
+                return fence
             #aşağı yoksa yönü sola dön    
             else:
                 fence+=1
                 dir=2
                 next=index-1
                 if (x>0 and next in list):
-                    fence+=Move(p, next, list, dir)
+                    fence+=Move(coordinates[next], next, list, dir)
+                    return fence
                 #sol da yoksa geri yukarı dön
                 else:
                     next=index-(xmax+1)
                     fence+=1
                     dir=3
-                    fence+=Move(p, next, list, dir)
+                    if(y>0 and next in list):
+                        fence+=Move(coordinates[next], next, list, dir)
+                        return fence
+                    else:
+                        fence+=1
+                        return fence
     if(dir==2):
         #sola doğru geldiyse önce aşağıya bak varsa yönü aşağı dön aşağı git
         next=index+(xmax+1)
@@ -169,24 +216,32 @@ def Move(p, index, list, dir):
             fence+=1
             dir=1
             fence+= Move(coordinates[next], next, list, dir)
+            return fence
         #aşağı yoksa sola bak solda varsa ona gec fence artmiyor
         else:
             next=index-1
             if(x>0 and next in list):
-                fence+=Move(p, next, list, dir)
+                fence+=Move(coordinates[next], next, list, dir)
+                return fence
             #yan yoksa yönü yukar dön    
             else:
                 fence+=1
                 dir=3
                 next=index-(xmax+1)
                 if (y>0 and next in list):
-                    fence+=Move(p, next, list, dir)
+                    fence+=Move(coordinates[next], next, list, dir)
+                    return fence
                 #yukarı da yoksa geri sağa dön
                 else:
                     next=index+1
                     fence+=1
                     dir=0
-                    fence+=Move(p, next, list, dir)
+                    if(x<xmax and next in list):
+                        fence+=Move(coordinates[next], next, list, dir)
+                        return fence
+                    else:
+                        fence+=1
+                        return fence
     elif(dir==3):
         #yukar doğru geldiyse önce sola bak varsa yönü sola dön sola git
         next=index-1
@@ -194,24 +249,32 @@ def Move(p, index, list, dir):
             fence+=1
             dir=2
             fence+= Move(coordinates[next], next, list, dir)
+            return fence
         #sol yoksa yukar varsa ona gec fence artmiyor
         else:
             next=index-(xmax+1)
             if(y>0 and next in list):
-                fence+=Move(p, next, list, dir)
+                fence+=Move(coordinates[next], next, list, dir)
+                return fence
             #yukarı yoksa yönü sağa dön    
             else:
                 fence+=1
                 dir=0
                 next=index+1
                 if (x<xmax and next in list):
-                    fence+=Move(p, next, list, dir)
+                    fence+=Move(coordinates[next], next, list, dir)
+                    return fence
                 #yukarı da yoksa geri aşağı dön
                 else:
                     next=index+(xmax+1)
                     fence+=1
                     dir=1
-                    fence+=Move(p, next, list, dir)
+                    if(y<ymax and next in list):
+                        fence+=Move(coordinates[next], next, list, dir)
+                        return fence
+                    else:
+                        fence+=1
+                        return fence
 
     return fence
 
@@ -221,10 +284,14 @@ for i in range(len(cachedir)):
     k=0
     for k in range(len(cache[i])):
         firstindex=cache[i][k][0]
-        Move(coordinates[firstindex],0,cache[i][k],0)
+        firstmove=False
+        nofence=(Move(coordinates[firstindex],firstindex,cache[i][k],0))
+        arearegion=len(cache[i][k])
+        result2+=(nofence*arearegion)
 
 
 
 
 
 print("Result 1 is ..." , result1)
+print("Result 2 is ..." , result2)
